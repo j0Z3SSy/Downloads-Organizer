@@ -1,0 +1,3 @@
+scripti joka järjestää kansioihin tiedosto päätteen mukaan mikä kuuluu mihinkin.
+
+- kommentoinnit ja logi kuntoon.
