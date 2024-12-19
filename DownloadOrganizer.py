@@ -26,6 +26,8 @@ logit = os.getenv("LOGIT")
 
 # Lataukset-kansion polku, tämä kansio on se joka on valvottu (Watchdogs).
 lataukset_kansio = valvottu
+# CSV-log-tiedoston polku, johon siirroista kirjataan merkinnät.
+log_file = logit
 
 # Kansiot ja tiedostopäätteet eri kategorioille.
 kategoriat = {
@@ -137,9 +139,6 @@ kategoriat = {
     ],  # Muut tiedostot, joita ei ole määritelty kategorioissa.
 }
 
-# CSV-log-tiedoston polku, johon siirroista kirjataan merkinnät.
-log_file = logit
-
 # Lisää tämä funktio tiedoston koon tarkistamiseen
 def onko_lataus_valmis(tiedosto_polku):
     """
@@ -183,21 +182,22 @@ def luo_uusi_nimi(kohdepolku):
         )
     return kohdepolku
 
-
 # Loggausfunktio, joka kirjoittaa siirrot CSV-tiedostoon.
 def loggaa(tiedosto, kategoria, siirto_tyyppi):
     """
     Tämä funktio kirjoittaa tiedostosiirrosta tiedot log-tiedostoon.
     Kirjataan aikaleima, tiedostonimi, kategoria ja siirron tyyppi.
     """
+    # Luodaan tiedosto, jos sitä ei ole olemassa, ja lisätään otsikkorivi.
+    if not os.path.exists(log_file):
+        with open(log_file, mode="w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["Aikaleima", "Tiedosto", "Kategoria", "Siirto tyyppi"])
+
     aika = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Haetaan nykyinen aika.
-    with open(
-        log_file, mode="a", newline=""
-    ) as file:  # Avataan log-tiedosto kirjoittamista varten.
+    with open(log_file, mode="a", newline="") as file:  # Avataan log-tiedosto kirjoittamista varten.
         writer = csv.writer(file)
-        writer.writerow(
-            [aika, tiedosto, kategoria, siirto_tyyppi]
-        )  # Kirjoitetaan tiedot uuteen riviin.
+        writer.writerow([aika, tiedosto, kategoria, siirto_tyyppi])  # Kirjoitetaan tiedot uuteen riviin.
 
 
 def siirra_tiedosto(tiedosto_polku, tiedosto):
@@ -324,9 +324,6 @@ observer.schedule(
 
 # Käynnistetään Watchdog.
 observer.start()
-print(
-    f"Lataukset-kansion valvonta käynnistetty [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]..."
-)
 # Kirjataan aloituslogi.
 loggaa("Lataukset-kansion valvonta käynnistetty", "N/A", "Aloitus")
 
@@ -346,4 +343,5 @@ try:
         time.sleep(0.01)
 except KeyboardInterrupt:  # Käyttäjä keskeytti ohjelman (Ctrl+C).
     observer.stop()  # Lopetetaan valvonta.
+    loggaa("Lataukset-kansion valvonta lopetettu", "N/A", "Loppu")
 observer.join()  # Odotetaan valvonnan lopettamista.
