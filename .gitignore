@@ -5,5 +5,5 @@
 # Ignooraa logit
 *.csv
 **/*.csv
-
+log.csv
 
