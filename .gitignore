@@ -1,21 +1,9 @@
-# Ignore .env files
+# Ignooraa .env tiedostot
 *.env
 **/*.env
 
-# Ignore .cache files
-*.cache
-**/*.cache
+# Ignooraa logit
+*.csv
+**/*.csv
 
-# Ignore IDE-specific directories and files
-**/.vscode/
-**/.idea/
-*.iml
-
-# Ignore log files
-*.log
-**/*.log
-
-# Ignore .config files that contain sensitive data
-config.json
-**/config.json
 
